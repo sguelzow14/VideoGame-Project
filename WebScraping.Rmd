@@ -28,7 +28,7 @@ for(i in 1:length(titles)){
 
 Full.df<-data.frame("Date of Release"=1:length(titles),"MetaScore"=1:length(titles),"Critics"=1:length(titles),"Score"=1:length(titles),"Reviews"=1:length(titles),"Genres"=1:length(titles),"Rating"=1:length(titles))
 for(i in 1:length(titles)){
-  urltitle<-titles[1]
+  urltitle<-titles[i]
   urltitle<-str_replace_all(urltitle,"&","")#process to change titles to url form
   urltitle<-str_replace_all(urltitle,":","")#changes colons to delete
   urltitle<-str_replace_all(urltitle,"  "," ")#changes double space to space
@@ -41,19 +41,21 @@ for(i in 1:length(titles)){
   url<-str_c("https://www.metacritic.com/game/playstation-4/",urltitle)#combines strings
   url<-tolower(url)#puts into lower case
   url<-read_html(url)#so this is the url needed for the individual titles
-  data<- html_nodes(url,".product_rating .data , .product_genre , .count a , .large , .game span , .release_data .data")#green yellow and red have different .positivespan changing to .game span gets everything
+  data<- html_nodes(url,".product_platforms")#green yellow and red have different .positivespan changing to .game span gets everything
   textdata<-html_text(data)
   Full.df[i,1]=textdata[1]
+  data<-html_nodes(url,"")
   Full.df[i,2]=textdata[2]
   Full.df[i,3]=textdata[3]
   Full.df[i,4]=textdata[4]#some games seem to not have ratings
   Full.df[i,5]=textdata[5]
   Full.df[i,6]=textdata[7]
-  Full.df[i,7]=textdata[8]
+  Full.df[i,8]=textdata[9]
+  Full.df[i,9]=textdata[10]
 
 
 
   print(textdata)
 }
-
+  #data<- html_nodes(url,".product_platforms , .product_genre , .product_rating .data , .count a , .large , .game span , .release_data .data , h1")
 ```
