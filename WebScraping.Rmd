@@ -20,17 +20,16 @@ library(httr)
 ```{r}
 listpage <- read_html("https://www.metacritic.com/browse/games/score/metascore/90day/ps4/filtered") #Titles URL
 titlelist<- html_nodes(listpage, "#main .product_title a")#just titles 
-titles<-html_text(titlelist)
-titles# as html
-for(i in 1:62){
+titles<-html_text(titlelist) # as html
+for(i in 1:length(titles)){
   titles[i]= str_sub(titles[i], 30, -54)#format of titles
 
 }
 
-Full.df<-data.frame("Title"=1:62,"MetaScore"=1:62,"User"=1:62,"Rating"=1:62)
-for(i in 1:62){
-  urltitle<-titles[i]
-  urltitle<-str_replace_all(urltitle,"&","")
+Full.df<-data.frame("Date of Release"=1:length(titles),"MetaScore"=1:length(titles),"Critics"=1:length(titles),"Score"=1:length(titles),"Reviews"=1:length(titles),"Genres"=1:length(titles),"Rating"=1:length(titles))
+for(i in 1:length(titles)){
+  urltitle<-titles[1]
+  urltitle<-str_replace_all(urltitle,"&","")#process to change titles to url form
   urltitle<-str_replace_all(urltitle,":","")#changes colons to delete
   urltitle<-str_replace_all(urltitle,"  "," ")#changes double space to space
   urltitle<-str_replace_all(urltitle," ","-")#changes spaces to dashes
@@ -42,12 +41,18 @@ for(i in 1:62){
   url<-str_c("https://www.metacritic.com/game/playstation-4/",urltitle)#combines strings
   url<-tolower(url)#puts into lower case
   url<-read_html(url)#so this is the url needed for the individual titles
-  data<- html_nodes(url,".large , h1 , .product_rating .data , .game span")#green yellow and red have different .positivespan changing to .game span gets everything
+  data<- html_nodes(url,".product_rating .data , .product_genre , .count a , .large , .game span , .release_data .data")#green yellow and red have different .positivespan changing to .game span gets everything
   textdata<-html_text(data)
-  Full.df[i,1]=textdata[1]#math to make sure 1,5,11 go to section 1
+  Full.df[i,1]=textdata[1]
   Full.df[i,2]=textdata[2]
   Full.df[i,3]=textdata[3]
-  Full.df[i,4]=textdata[5]#some games seem to not have ratings
+  Full.df[i,4]=textdata[4]#some games seem to not have ratings
+  Full.df[i,5]=textdata[5]
+  Full.df[i,6]=textdata[7]
+  Full.df[i,7]=textdata[8]
+
+
+
   print(textdata)
 }
 
