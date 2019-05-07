@@ -1,0 +1,55 @@
+---
+title: 'Web Scraping in R'
+output:
+  pdf_document:
+    fig_height: 3
+    fig_width: 4.5
+  html_document: default
+word_document: default
+editor_options: 
+  chunk_output_type: console
+---
+  
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(stringr)
+library(rvest)
+library(httr)
+```
+```{r}
+listpage <- read_html("https://www.metacritic.com/browse/games/score/metascore/90day/ps4/filtered") #Titles URL
+titlelist<- html_nodes(listpage, "#main .product_title a")#just titles 
+titles<-html_text(titlelist)
+titles# as html
+for(i in 1:66){
+  titles[i]= str_sub(titles[i], 30, -54)#format of titles
+
+}
+
+Full.df<-data.frame("Title"=1:65,"MetaScore"=1:65,"User"=1:65,"Rating"=1:65)
+for(i in 1:65){
+  urltitle<-titles[i]
+  #urltitle<-str_replace_all(urltitle,": ","")#changes colons to delete #some reason a colon and space is deleted together
+  urltitle<-str_replace_all(urltitle,"&","")
+  urltitle<-str_replace_all(urltitle,":","")#changes colons to delete
+  urltitle<-str_replace_all(urltitle,"  "," ")#changes double space to space
+  urltitle<-str_replace_all(urltitle," ","-")#changes spaces to dashes
+  urltitle<-str_replace_all(urltitle,";","")#deletes semicolons
+  urltitle<-str_replace_all(urltitle,"\\.","")
+  urltitle<-str_replace_all(urltitle,"'","")
+  urltitle<-str_replace_all(urltitle,"/","")
+
+  url<-str_c("https://www.metacritic.com/game/playstation-4/",urltitle)#combines strings
+  url<-tolower(url)#puts into lower case
+  url<-read_html(url)#so this is the url needed for the individual titles
+  data<- html_nodes(url,".large , h1 , .product_rating .data , .game span")#green yellow and red have different .positivespan changing to .game span gets everything
+  textdata<-html_text(data)
+  Full.df[i,1]=textdata[1]#math to make sure 1,5,11 go to section 1
+  Full.df[i,2]=textdata[2]
+  Full.df[i,3]=textdata[3]
+  Full.df[i,4]=textdata[5]#some games seem to not have ratings
+  print(textdata)
+}
+
+```
