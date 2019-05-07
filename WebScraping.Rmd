@@ -22,15 +22,14 @@ listpage <- read_html("https://www.metacritic.com/browse/games/score/metascore/9
 titlelist<- html_nodes(listpage, "#main .product_title a")#just titles 
 titles<-html_text(titlelist)
 titles# as html
-for(i in 1:66){
+for(i in 1:62){
   titles[i]= str_sub(titles[i], 30, -54)#format of titles
 
 }
 
-Full.df<-data.frame("Title"=1:65,"MetaScore"=1:65,"User"=1:65,"Rating"=1:65)
-for(i in 1:65){
+Full.df<-data.frame("Title"=1:62,"MetaScore"=1:62,"User"=1:62,"Rating"=1:62)
+for(i in 1:62){
   urltitle<-titles[i]
-  #urltitle<-str_replace_all(urltitle,": ","")#changes colons to delete #some reason a colon and space is deleted together
   urltitle<-str_replace_all(urltitle,"&","")
   urltitle<-str_replace_all(urltitle,":","")#changes colons to delete
   urltitle<-str_replace_all(urltitle,"  "," ")#changes double space to space
