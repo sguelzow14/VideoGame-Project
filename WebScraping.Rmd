@@ -25,7 +25,7 @@ for(i in 1:length(titles)){
   titles[i]= str_sub(titles[i], 30, -54)#format of titles
 
 }
-i<-1
+i<-46
 Full.df<-data.frame("Name"=1:length(titles), "Date of Release"=1:length(titles), "MetaScore"=1:length(titles), "Critics"=1:length(titles),"User Score"=1:length(titles) ,"Number of Reviews"=1:length(titles), "Genres"=1:length(titles),"Rating"=1:length(titles),"Also on"=length(titles))
 for(i in 1:length(titles)){
   urltitle<-titles[i ]
@@ -58,7 +58,7 @@ for(i in 1:length(titles)){
   Full.df[i,5]=textdata[1]
   data<- html_nodes(url,".feature_userscore a")#green yellow and red have different .positivespan changing to .game span gets everything
   textdata<-html_text(data)
-  Full.df[i,6]=textdata[1]
+  Full.df[i,6]=textdata[2]
   data<- html_nodes(url,".product_genre")#green yellow and red have different .positivespan changing to .game span gets everything
   textdata<-html_text(data)
   Full.df[i,7]=textdata[1]
