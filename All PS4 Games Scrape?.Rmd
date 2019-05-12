@@ -18,18 +18,17 @@ library(rvest)
 library(httr)
 ```
 ```{r}
-i<-1
+i<-1#declare Variables
 a<-1
-Full <- readRDS("Full")
-my_data <- list()
-for (i in 1:15) {
+Full <- readRDS("Full")#loading dataframe 
+my_data <- list()#list
+for (i in 1:15) {#creates a list of dataframes
     my_data[[i]] <- Full
 }   
-a<- readRDS("my_data")
 
-for(a in 1:15){
+for(a in 1:15){#for loop for each webpage on metacritic
   
-listpage<-str_c("https://www.metacritic.com/browse/games/score/metascore/all/ps4/filtered?sort=desc&page=",a)
+listpage<-str_c("https://www.metacritic.com/browse/games/score/metascore/all/ps4/filtered?sort=desc&page=",a)#gets correct web page
 listpage <- read_html(listpage) #Titles URL
 titlelist<- html_nodes(listpage, "#main .product_title a")#just titles 
 titles<-html_text(titlelist) # as html
@@ -41,10 +40,10 @@ for(i in 1:length(titles)){
   urltitle<-titles[i ]
   urltitle<-str_replace_all(urltitle,"/","")
   urltitle<-str_replace_all(urltitle,"&","")#process to change titles to url form
-  urltitle<-str_replace_all(urltitle,":","")#changes colons to delete
-  urltitle<-str_replace_all(urltitle,"  "," ")#changes double space to space
-  urltitle<-str_replace_all(urltitle," ","-")#changes spaces to dashes
-  urltitle<-str_replace_all(urltitle,";","")#deletes semicolons
+  urltitle<-str_replace_all(urltitle,":","")
+  urltitle<-str_replace_all(urltitle,"  "," ")
+  urltitle<-str_replace_all(urltitle," ","-")
+  urltitle<-str_replace_all(urltitle,";","")
   urltitle<-str_replace_all(urltitle,"\\.","")
   urltitle<-str_replace_all(urltitle,"'","")
   urltitle<-str_replace_all(urltitle,",","")
@@ -53,58 +52,53 @@ for(i in 1:length(titles)){
   urltitle<-str_replace_all(urltitle,"@","")
   urltitle<-str_replace_all(urltitle,"\\*","")
 
-
-
-
-
-
-
   url<-str_c("https://www.metacritic.com/game/playstation-4/",urltitle)#combines strings
   url<-tolower(url)#puts into lower case
   url<-read_html(url)#so this is the url needed for the individual titles
-  data<-html_nodes(url,"h1")
-  textdata<-html_text(data)
-  my_data[[a]][i,1]=textdata[1]
-  data<- html_nodes(url,".release_data")#green yellow and red have different .positivespan changing to .game span gets everything
+  data<-html_nodes(url,"h1")#name
+  textdata<-html_text(data)#changes to HTML
+  my_data[[a]][i,1]=textdata[1]#puts into data frame with for loop
+  data<- html_nodes(url,".release_data")#date
   textdata<-html_text(data)
   my_data[[a]][i,2]=textdata[1]
-  data<- html_nodes(url,".game span")#green yellow and red have different .positivespan changing to .game span gets everything
+  data<- html_nodes(url,".game span")#green yellow and red have different .positivespan changing to .game span gets everything meta score
   textdata<-html_text(data)
   my_data[[a]][i,3]=textdata[1]
-  data<- html_nodes(url,".count a span")#green yellow and red have different .positivespan changing to .game span gets everything
+  data<- html_nodes(url,".count a span")#Count
   textdata<-html_text(data)
   my_data[[a]][i,4]=textdata[1]#some games seem to not have ratings
-  data<- html_nodes(url,".large")#green yellow and red have different .positivespan changing to .game span gets everything
+  data<- html_nodes(url,".large")#User Score
   textdata<-html_text(data)
   my_data[[a]][i,5]=textdata[1]
-  data<- html_nodes(url,".feature_userscore a")#green yellow and red have different .positivespan changing to .game span gets everything
+  data<- html_nodes(url,".feature_userscore a")#num of users 
   textdata<-html_text(data)
   my_data[[a]][i,6]=textdata[2]
-  data<- html_nodes(url,".product_genre")#green yellow and red have different .positivespan changing to .game span gets everything
+  data<- html_nodes(url,".product_genre")#Genre
   textdata<-html_text(data)
   my_data[[a]][i,7]=textdata[1]
-  data<- html_nodes(url,".product_rating .data")#green yellow and red have different .positivespan changing to .game span gets everything
+  data<- html_nodes(url,".product_rating .data")#Rating ie M or T
   textdata<-html_text(data)
   my_data[[a]][i,8]=textdata[1]
-  data<- html_nodes(url,".product_platforms")#green yellow and red have different .positivespan changing to .game span gets everything
+  data<- html_nodes(url,".product_platforms")# What other Products
   textdata<-html_text(data)
   my_data[[a]][i,9]=textdata[1]
 
 
 
-  print(i)
+  print(i)#progress counter
 }  
-my_data[[a]]<-my_data[[a]]%>%
+my_data[[a]]<-my_data[[a]]%>%#mutate one data frame(one page of metacritic) during the loop changes the format to good
   mutate(Date.of.Release = str_sub(Date.of.Release, 50, 70), Genres = str_sub(Genres, 50, -1), Number.of.Reviews = str_sub(Number.of.Reviews, 1, -9), CrossPlatform = ifelse(is.na(Also.on)== FALSE, "Y", "N")
          )%>%
   select(-Also.on) %>%
   mutate(MetaScore = as.numeric(MetaScore), Critics = as.numeric(Critics), User.Score = as.numeric(User.Score), Number.of.Reviews = as.numeric(Number.of.Reviews))
-print(a)
+print(a)#progress Check
 }
-TOPPS4<-readRDS(file="TOPPS4")
-All<-bind_rows(my_data, .id = "column_label")
+TOPPS4<-readRDS(file="TOPPS4")#first 100 aren't scraped because the url is different
+All<-bind_rows(my_data, .id = "column_label")#changes List to Dataframe
 All<- All%>%
   select(-column_label)
-AllTitle<-rbind(All,TOPPS4)
-
+AllTitle<-rbind(All,TOPPS4)#adds first 100
+AllTitle$Date.of.Release = str_sub(All$Date.of.Release,7,-4)#messed up on date post fix
+AllTitle$Date.of.Release = as.Date(All$Date.of.Release,"%b %d, %Y")#into date format
 ```
