@@ -99,6 +99,7 @@ All<-bind_rows(my_data, .id = "column_label")#changes List to Dataframe
 All<- All%>%
   select(-column_label)
 AllTitle<-rbind(All,TOPPS4)#adds first 100
-AllTitle$Date.of.Release = str_sub(All$Date.of.Release,7,-4)#messed up on date post fix
-AllTitle$Date.of.Release = as.Date(All$Date.of.Release,"%b %d, %Y")#into date format
+AllTitle$Date.of.Release = str_sub(AllTitle$Date.of.Release,7,-4)#messed up on date post fix
+AllTitle$Date.of.Release = as.Date(AllTitle$Date.of.Release,"%b %d, %Y")#into date format
+write_rds(AllTitle,"AllTitle")
 ```
