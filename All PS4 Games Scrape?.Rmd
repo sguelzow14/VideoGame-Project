@@ -20,14 +20,16 @@ library(httr)
 ```{r}
 i<-1
 a<-1
-TOPPS4 <- readRDS("TOPPS4")
+Full <- readRDS("Full")
 my_data <- list()
 for (i in 1:15) {
-    my_data[[i]] <- TOPPS4
+    my_data[[i]] <- Full
 }   
+a<- readRDS("my_data")
+
 for(a in 1:15){
   
-listpage<-str_c("https://www.metacritic.com/browse/games/score/metascore/all/ps4/filtered?sort=desc&page=",i)
+listpage<-str_c("https://www.metacritic.com/browse/games/score/metascore/all/ps4/filtered?sort=desc&page=",a)
 listpage <- read_html(listpage) #Titles URL
 titlelist<- html_nodes(listpage, "#main .product_title a")#just titles 
 titles<-html_text(titlelist) # as html
@@ -37,6 +39,7 @@ for(i in 1:length(titles)){
 }
 for(i in 1:length(titles)){
   urltitle<-titles[i ]
+  urltitle<-str_replace_all(urltitle,"/","")
   urltitle<-str_replace_all(urltitle,"&","")#process to change titles to url form
   urltitle<-str_replace_all(urltitle,":","")#changes colons to delete
   urltitle<-str_replace_all(urltitle,"  "," ")#changes double space to space
@@ -44,7 +47,17 @@ for(i in 1:length(titles)){
   urltitle<-str_replace_all(urltitle,";","")#deletes semicolons
   urltitle<-str_replace_all(urltitle,"\\.","")
   urltitle<-str_replace_all(urltitle,"'","")
-  urltitle<-str_replace_all(urltitle,"/","")
+  urltitle<-str_replace_all(urltitle,",","")
+  urltitle<-str_replace_all(urltitle,"\\[","")
+  urltitle<-str_replace_all(urltitle,"]","")
+  urltitle<-str_replace_all(urltitle,"@","")
+  urltitle<-str_replace_all(urltitle,"\\*","")
+
+
+
+
+
+
 
   url<-str_c("https://www.metacritic.com/game/playstation-4/",urltitle)#combines strings
   url<-tolower(url)#puts into lower case
@@ -88,5 +101,10 @@ my_data[[a]]<-my_data[[a]]%>%
   mutate(MetaScore = as.numeric(MetaScore), Critics = as.numeric(Critics), User.Score = as.numeric(User.Score), Number.of.Reviews = as.numeric(Number.of.Reviews))
 print(a)
 }
+TOPPS4<-readRDS(file="TOPPS4")
+All<-bind_rows(my_data, .id = "column_label")
+All<- All%>%
+  select(-column_label)
+AllTitle<-rbind(All,TOPPS4)
 
 ```
