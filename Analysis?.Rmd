@@ -15,6 +15,7 @@ Metascore X Price
 UserScore X MetaScore
 Critics X Metascore
 Reviews X Userscore 
+Reviews X Critics 
 Date of Release X Price
 
 ```{r}
@@ -22,23 +23,32 @@ TOPPS4 <- readRDS("TOPPS4")
 Final <- readRDS("Final")
 All <- readRDS("AllTitle")
 ggplot(data=All)+
-  geom_point(aes(x=MetaScore,y=User.Score))+
+  geom_jitter(aes(x=MetaScore,y=User.Score))+
   geom_smooth(aes(x=MetaScore,y=User.Score))#General Correlation
 ggplot(data=All)+
-  geom_point(aes(x=Critics,y=MetaScore))+
+  geom_jitter(aes(x=Critics,y=MetaScore))+
   geom_smooth(aes(x=Critics,y=MetaScore))#More critics seem to lower variance of Metascore
 ggplot(data=All)+
-  geom_point(aes(x=Number.of.Reviews,y=User.Score))+
+  geom_jitter(aes(x=Number.of.Reviews,y=User.Score))+
   geom_smooth(aes(x=Number.of.Reviews,y=User.Score))#Variance again seems to lower as more users review
 ggplot(data=All)+
-  geom_point(aes(x=Number.of.Reviews,y=Critics))+#Correlation
+  geom_jitter(aes(x=Number.of.Reviews,y=Critics))+#Correlation
   geom_smooth(aes(x=Number.of.Reviews,y=Critics))
-mo<-All %>% 
-  mutate(m=format(Date.of.Release,"%m %Y"))%>%
+timeline<-All %>% 
+  mutate(m=format(Date.of.Release,"%Y %m"))%>%
   group_by(m)%>%
   summarize(averagem=mean(MetaScore))
 ggplot(data = mo)+#timeline shows very little correlation
   geom_point(aes(x=m,y=averagem))+
+  geom_smooth(aes(x=m,y=averagem))+
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank())
+  All %>% 
+  mutate(m=format(Date.of.Release,"%m"))%>%
+  group_by(m)%>%
+  summarize(averagem=mean(MetaScore))%>%
+  ggplot()+
+  geom_point(aes(x=m,y=averagem))+
   geom_smooth(aes(x=m,y=averagem))
-  
+
+  #y=format(Date.of.Release,"%Y"))%>%
 ```
