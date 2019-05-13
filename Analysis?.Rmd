@@ -33,10 +33,12 @@ ggplot(data=Final)+
 ggplot(data=Final)+
   geom_point(aes(x=Number.of.Reviews,y=Critics))+#Correlation
   geom_smooth(aes(x=Number.of.Reviews,y=Critics))
-All %>% group_by(month=Date.of.Release(date, "month")) %>%
-   summarize(ave=mean(month))
-ggplot(data = All)+
-  geom_point(aes(x=Date.of.Release,y=MetaScore))+
-  geom_smooth(aes(x=Date.of.Release,y=MetaScore))
+mo<-All %>% 
+  mutate(m=format(Date.of.Release,"%m %Y"))%>%
+  group_by(m)%>%
+  summarize(averagem=mean(MetaScore))
+ggplot(data = mo)+#timeline shows very little correlation
+  geom_point(aes(x=m,y=averagem))+
+  geom_smooth(aes(x=m,y=averagem))
   
 ```
