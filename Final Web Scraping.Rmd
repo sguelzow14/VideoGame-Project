@@ -29,10 +29,10 @@ Full.df<-data.frame("Name"=1:length(titles), "Date of Release"=1:length(titles),
 for(i in 1:length(titles)){
   urltitle<-titles[i ]
   urltitle<-str_replace_all(urltitle,"&","")#process to change titles to url form
-  urltitle<-str_replace_all(urltitle,":","")#changes colons to delete
-  urltitle<-str_replace_all(urltitle,"  "," ")#changes double space to space
-  urltitle<-str_replace_all(urltitle," ","-")#changes spaces to dashes
-  urltitle<-str_replace_all(urltitle,";","")#deletes semicolons
+  urltitle<-str_replace_all(urltitle,":","")
+  urltitle<-str_replace_all(urltitle,"  "," ")
+  urltitle<-str_replace_all(urltitle," ","-")
+  urltitle<-str_replace_all(urltitle,";","")
   urltitle<-str_replace_all(urltitle,"\\.","")
   urltitle<-str_replace_all(urltitle,"'","")
   urltitle<-str_replace_all(urltitle,"/","")
@@ -42,42 +42,42 @@ for(i in 1:length(titles)){
   data<-html_nodes(url,"h1")
   textdata<-html_text(data)
   Full.df[i,1]=textdata[1]
-  data<- html_nodes(url,".release_data")#green yellow and red have different .positivespan changing to .game span gets everything
+  data<- html_nodes(url,".release_data")#release date
   textdata<-html_text(data)
   Full.df[i,2]=textdata[1]
-  data<- html_nodes(url,".game span")#green yellow and red have different .positivespan changing to .game span gets everything
+  data<- html_nodes(url,".game span")#green yellow and red have different .positivespan changing to .game span gets everything METASCORE
   textdata<-html_text(data)
   Full.df[i,3]=textdata[1]
-  data<- html_nodes(url,".count a span")#green yellow and red have different .positivespan changing to .game span gets everything
+  data<- html_nodes(url,".count a span")#Critic Count
   textdata<-html_text(data)
-  Full.df[i,4]=textdata[1]#some games seem to not have ratings
-  data<- html_nodes(url,".large")#green yellow and red have different .positivespan changing to .game span gets everything
+  Full.df[i,4]=textdata[1]#
+  data<- html_nodes(url,".large")#USER SCORE
   textdata<-html_text(data)
   Full.df[i,5]=textdata[1]
-  data<- html_nodes(url,".feature_userscore a")#green yellow and red have different .positivespan changing to .game span gets everything
+  data<- html_nodes(url,".feature_userscore a")# Num of Users reviewed
   textdata<-html_text(data)
   Full.df[i,6]=textdata[2]
-  data<- html_nodes(url,".product_genre")#green yellow and red have different .positivespan changing to .game span gets everything
+  data<- html_nodes(url,".product_genre")#Genre
   textdata<-html_text(data)
   Full.df[i,7]=textdata[1]
-  data<- html_nodes(url,".product_rating .data")#green yellow and red have different .positivespan changing to .game span gets everything
+  data<- html_nodes(url,".product_rating .data")#Rating of Game ie T or M
   textdata<-html_text(data)
-  Full.df[i,8]=textdata[1]
-  data<- html_nodes(url,".product_platforms")#green yellow and red have different .positivespan changing to .game span gets everything
+  Full.df[i,8]=textdata[1]# some games have no rating
+  data<- html_nodes(url,".product_platforms")#Platform it's also on
   textdata<-html_text(data)
   Full.df[i,9]=textdata[1]
-  print(i)
+  print(i)#progress checker
 }
-  #data<- html_nodes(url,".product_platforms , .product_genre , .product_rating .data , .count a , .large , .game span , .release_data .data , h1")
 ```
 
 ```{r}
 Final.df <- Full.df %>%
-  mutate(Date.of.Release = str_sub(Date.of.Release, 50, 70), Genres = str_sub(Genres, 50, -1), Number.of.Reviews = str_sub(Number.of.Reviews, 1, -9), CrossPlatform = ifelse(is.na(Also.on)== FALSE, "Y", "N")
+  mutate(Date.of.Release = str_sub(Date.of.Release, 50, 70), Genres = str_sub(Genres, 50, -1), Number.of.Reviews = str_sub(Number.of.Reviews, 1, -9), CrossPlatform = ifelse(is.na(Also.on)== FALSE, "Y", "N")#cleans up everything 
          )%>%
   select(-Also.on) %>%
   mutate(MetaScore = as.numeric(MetaScore), Critics = as.numeric(Critics), User.Score = as.numeric(User.Score), Number.of.Reviews = as.numeric(Number.of.Reviews))
-as.tibble(Final.df)
-  #data<- html_nodes(url,".product_platforms , .product_genre , .product_rating .data , .count a , .large , .game span , .release_data .data , h1")
+Final.df$Date.of.Release = str_sub(Final.df$Date.of.Release,7,-4)#messed up on date post fix
+Final.df$Date.of.Release = as.Date(Final.df$Date.of.Release,"%b %d, %Y")#into date format
+write_rds(Final.df,"Final")#writes into rds file
 ```
 

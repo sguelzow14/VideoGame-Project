@@ -101,5 +101,5 @@ All<- All%>%
 AllTitle<-rbind(All,TOPPS4)#adds first 100
 AllTitle$Date.of.Release = str_sub(AllTitle$Date.of.Release,7,-4)#messed up on date post fix
 AllTitle$Date.of.Release = as.Date(AllTitle$Date.of.Release,"%b %d, %Y")#into date format
-write_rds(AllTitle,"AllTitle")
+write_rds(AllTitle,"AllTitle")#writes into file
 ```
