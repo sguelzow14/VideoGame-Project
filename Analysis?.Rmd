@@ -21,16 +21,16 @@ Date of Release X Price
 TOPPS4 <- readRDS("TOPPS4")
 Final <- readRDS("Final")
 All <- readRDS("AllTitle")
-ggplot(data=Final)+
+ggplot(data=All)+
   geom_point(aes(x=MetaScore,y=User.Score))+
   geom_smooth(aes(x=MetaScore,y=User.Score))#General Correlation
-ggplot(data=Final)+
+ggplot(data=All)+
   geom_point(aes(x=Critics,y=MetaScore))+
   geom_smooth(aes(x=Critics,y=MetaScore))#More critics seem to lower variance of Metascore
-ggplot(data=Final)+
+ggplot(data=All)+
   geom_point(aes(x=Number.of.Reviews,y=User.Score))+
   geom_smooth(aes(x=Number.of.Reviews,y=User.Score))#Variance again seems to lower as more users review
-ggplot(data=Final)+
+ggplot(data=All)+
   geom_point(aes(x=Number.of.Reviews,y=Critics))+#Correlation
   geom_smooth(aes(x=Number.of.Reviews,y=Critics))
 mo<-All %>% 
