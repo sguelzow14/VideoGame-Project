@@ -26,14 +26,14 @@ for(i in 1:length(titles)){
 
 }
 i<-46
-Full.df<-data.frame("Name"=1:length(titles), "Date of Release"=1:length(titles), "MetaScore"=1:length(titles), "Critics"=1:length(titles),"User Score"=1:length(titles) ,"Number of Reviews"=1:length(titles), "Genres"=1:length(titles),"Rating"=1:length(titles),"Also on"=length(titles))
+Full.df<-data.frame("Name"=1:length(titles), "Date of Release"=1:length(titles), "MetaScore"=1:length(titles), "Critics"=1:length(titles),"User Score"=1:length(titles) ,"Number of Reviews"=1:length(titles), "Genres"=1:length(titles),"Rating"=1:length(titles),"Also on"=length(titles))#creation of data frame 
 for(i in 1:length(titles)){
   urltitle<-titles[i ]
-  urltitle<-str_replace_all(urltitle,"&","")#process to change titles to url form
-  urltitle<-str_replace_all(urltitle,":","")#changes colons to delete
-  urltitle<-str_replace_all(urltitle,"  "," ")#changes double space to space
-  urltitle<-str_replace_all(urltitle," ","-")#changes spaces to dashes
-  urltitle<-str_replace_all(urltitle,";","")#deletes semicolons
+  urltitle<-str_replace_all(urltitle,"&","")
+  urltitle<-str_replace_all(urltitle,":","")
+  urltitle<-str_replace_all(urltitle,"  "," ")
+  urltitle<-str_replace_all(urltitle," ","-")
+  urltitle<-str_replace_all(urltitle,";","")
   urltitle<-str_replace_all(urltitle,"\\.","")
   urltitle<-str_replace_all(urltitle,"'","")
   urltitle<-str_replace_all(urltitle,"/","")
@@ -41,31 +41,31 @@ for(i in 1:length(titles)){
   url<-str_c("https://www.metacritic.com/game/playstation-4/",urltitle)#combines strings
   url<-tolower(url)#puts into lower case
   url<-read_html(url)#so this is the url needed for the individual titles
-  data<-html_nodes(url,"h1")
+  data<-html_nodes(url,"h1")#name
   textdata<-html_text(data)
   Full.df[i,1]=textdata[1]
-  data<- html_nodes(url,".release_data")#green yellow and red have different .positivespan changing to .game span gets everything
+  data<- html_nodes(url,".release_data")#release date
   textdata<-html_text(data)
   Full.df[i,2]=textdata[1]
-  data<- html_nodes(url,".game span")#green yellow and red have different .positivespan changing to .game span gets everything
+  data<- html_nodes(url,".game span")#green yellow and red have different .positivespan changing to .game span gets metascore
   textdata<-html_text(data)
   Full.df[i,3]=textdata[1]
-  data<- html_nodes(url,".count a span")#green yellow and red have different .positivespan changing to .game span gets everything
+  data<- html_nodes(url,".count a span")#count of critics
   textdata<-html_text(data)
-  Full.df[i,4]=textdata[1]#some games seem to not have ratings
-  data<- html_nodes(url,".large")#green yellow and red have different .positivespan changing to .game span gets everything
+  Full.df[i,4]=textdata[1]
+  data<- html_nodes(url,".large")#User Score
   textdata<-html_text(data)
   Full.df[i,5]=textdata[1]
-  data<- html_nodes(url,".feature_userscore a")#green yellow and red have different .positivespan changing to .game span gets everything
+  data<- html_nodes(url,".feature_userscore a")#num of reviews
   textdata<-html_text(data)
   Full.df[i,6]=textdata[2]
-  data<- html_nodes(url,".product_genre")#green yellow and red have different .positivespan changing to .game span gets everything
+  data<- html_nodes(url,".product_genre")#genre
   textdata<-html_text(data)
   Full.df[i,7]=textdata[1]
-  data<- html_nodes(url,".product_rating .data")#green yellow and red have different .positivespan changing to .game span gets everything
+  data<- html_nodes(url,".product_rating .data")#Rating ie T or M
   textdata<-html_text(data)
-  Full.df[i,8]=textdata[1]
-  data<- html_nodes(url,".product_platforms")#green yellow and red have different .positivespan changing to .game span gets everything
+  Full.df[i,8]=textdata[1]#some games have no rating
+  data<- html_nodes(url,".product_platforms")#Platforms it is also on
   textdata<-html_text(data)
   Full.df[i,9]=textdata[1]
 
@@ -73,5 +73,5 @@ for(i in 1:length(titles)){
 
   print(i)
 }
-  #data<- html_nodes(url,".product_platforms , .product_genre , .product_rating .data , .count a , .large , .game span , .release_data .data , h1")
+#Webscraping to creat our Past 90 Days Webscrape
 ```
