@@ -1,0 +1,42 @@
+---
+title: "Analysis and Visualization"
+author: "Justin Horner"
+date: "5/11/2019"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+Visualizations:
+Timeline of the Average Meta/UserScores
+Metascore X Price
+UserScore X MetaScore
+Critics X Metascore
+Reviews X Userscore 
+Date of Release X Price
+
+```{r}
+TOPPS4 <- readRDS("TOPPS4")
+Final <- readRDS("Final")
+All <- readRDS("AllTitle")
+ggplot(data=Final)+
+  geom_point(aes(x=MetaScore,y=User.Score))+
+  geom_smooth(aes(x=MetaScore,y=User.Score))#General Correlation
+ggplot(data=Final)+
+  geom_point(aes(x=Critics,y=MetaScore))+
+  geom_smooth(aes(x=Critics,y=MetaScore))#More critics seem to lower variance of Metascore
+ggplot(data=Final)+
+  geom_point(aes(x=Number.of.Reviews,y=User.Score))+
+  geom_smooth(aes(x=Number.of.Reviews,y=User.Score))#Variance again seems to lower as more users review
+ggplot(data=Final)+
+  geom_point(aes(x=Number.of.Reviews,y=Critics))+#Correlation
+  geom_smooth(aes(x=Number.of.Reviews,y=Critics))
+All %>% group_by(month=Date.of.Release(date, "month")) %>%
+   summarize(ave=mean(month))
+ggplot(data = All)+
+  geom_point(aes(x=Date.of.Release,y=MetaScore))+
+  geom_smooth(aes(x=Date.of.Release,y=MetaScore))
+  
+```
