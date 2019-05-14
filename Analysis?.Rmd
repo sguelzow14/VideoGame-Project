@@ -38,7 +38,7 @@ timeline<-All %>%
   mutate(m=format(Date.of.Release,"%Y %m"))%>%
   group_by(m)%>%
   summarize(averagem=mean(MetaScore))
-ggplot(data = mo)+#timeline shows very little correlation
+ggplot(data = timeline)+#timeline shows very little correlation
   geom_point(aes(x=m,y=averagem))+
   geom_smooth(aes(x=m,y=averagem))+
   theme(axis.text.x = element_blank(), axis.ticks = element_blank())
