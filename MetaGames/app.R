@@ -1,5 +1,8 @@
 
 library(shiny)
+All<- readRDS("AllTitle")
+Final<- readRDS("Final")
+TOPPS4<-readRDS("TOPPS4")
 # Define UI for application that draws a histogram
 ui <- fluidPage(
    

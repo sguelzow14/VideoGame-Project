@@ -1,0 +1,12 @@
+name: MetaGames
+title: MetaGames
+username:
+account: horner1
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 929472
+bundleId: 2084021
+url: https://horner1.shinyapps.io/MetaGames/
+when: 1557860076.90583
+asMultiple: FALSE
+asStatic: FALSE
